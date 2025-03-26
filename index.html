@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu ubicación</title>
+</head>
+<body>
+    <h2>Verificando tu ubicación...</h2>
+    <p>Esperando permiso...</p>
+
+    <script>
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarUbicacion, mostrarError);
+            } else {
+                alert("Tu navegador no soporta geolocalización.");
+            }
+        }
+
+        function mostrarUbicacion(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            alert(`Tu ubicación: \nLatitud: ${lat}\nLongitud: ${lon}`);
+            
+            // Aquí puedes enviarlo a tu servidor
+            fetch('https://tu-servidor.com/guardar_ubicacion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ latitud: lat, longitud: lon })
+            });
+        }
+
+        function mostrarError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("No diste permiso para acceder a la ubicación.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("No se pudo obtener la ubicación.");
+                    break;
+                case error.TIMEOUT:
+                    alert("Tiempo de espera agotado.");
+                    break;
+                default:
+                    alert("Error desconocido.");
+                    break;
+            }
+        }
+
+        obtenerUbicacion();
+    </script>
+</body>
+</html>
